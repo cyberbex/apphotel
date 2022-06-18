@@ -2,8 +2,9 @@ from lib2to3.pgen2 import token
 from flask_restful import Resource, reqparse
 from pkg_resources import require
 from sqlalchemy import Identity
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt
 from werkzeug.security import safe_str_cmp
+from blacklist import BLACKLIST
 
 from models.usuario import UserModel
 
@@ -23,6 +24,7 @@ class User(Resource):
             return user.json()
         return {'message': 'user not found.'}, 404
 
+    @jwt_required()
     def delete(self, user_id):
         user = UserModel.find_user(user_id)
         if user:
@@ -61,3 +63,12 @@ class UserLogin(Resource):
                 identity=user.user_id)
             return {'acess token': token_de_acesso}, 200
         return{'message': 'The username or password is incorrect.'}, 401
+
+
+class UserLogout(Resource):
+
+    @jwt_required()
+    def post(self):
+        jwt_id = get_jwt()['jti']  # JWT Token Identifier
+        BLACKLIST.add(jwt_id)
+        return {'message': 'logged out successfully'}, 200
