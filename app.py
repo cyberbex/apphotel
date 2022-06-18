@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Api
+from flask_sqlalchemy import SQLAlchemy
 from resources.hotel import Hoteis, Hotel
 from resources.usuario import User, UserLogin, UserRegister, UserLogin
 from flask_jwt_extended import JWTManager
@@ -9,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banco.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'DontTellAnyone'
 api = Api(app)
-#banco = SQLAlchemy(app)
+banco = SQLAlchemy(app)
 jwt = JWTManager(app)
 
 
